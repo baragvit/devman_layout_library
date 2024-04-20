@@ -1,6 +1,7 @@
 import os
 
 import requests
+from bs4 import BeautifulSoup
 
 
 def check_for_redirect(response):
@@ -26,6 +27,18 @@ def download_books(books_download_directory, book_start_id, book_end_id):
             book_file.write(book_text)
 
 
+def print_book_title(book_id):
+    url = f'https://tululu.org/b{book_id}/'
+    response = requests.get(url)
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "lxml")
+    title_tag = soup.find('h1')
+    name, author = [title.strip() for title in title_tag.text.split('::')]
+    print(f"Заголовок: {name}")
+    print(f"Автор: {author}")
+
+
 if __name__ == '__main__':
-    os.makedirs('books', exist_ok=True)
-    download_books('books', 1, 10)
+    # os.makedirs('books', exist_ok=True)
+    # download_books('books', 1, 10)
+    print_book_title(1)
